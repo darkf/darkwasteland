@@ -1,14 +1,73 @@
 <!doctype html>
 <html>
 <body>
+<canvas id="canvas" width="800" height="640" style="border:1px solid black"></canvas>
 
 <script src="util.js"></script>
+<script src="tileset.js"></script>
 <script src="map.js"></script>
 <script>
-// test
+const camera = {x: 0, y: 0};
+const velocity = {x: 0, y: 0};
+const ctx = document.getElementById("canvas").getContext("2d");
+let map;
+
+ctx.imageSmoothingEnabled = false; // disable image filtering/AA
+
 requestXML("data/gamedata1/map00.xml", function(xml) {
-	console.log("map: %o", mapFromXML(xml));
+	map = mapFromXML(xml);
+	console.log("map: %o", map);
+
+	loadMapData(map, function() {
+		draw();
+		tick();
+	})
 });
+
+function draw() {
+	ctx.fillStyle = "white";
+	ctx.fillRect(0, 0, 800, 640);
+
+	ctx.save();
+	ctx.translate(-camera.x, -camera.y);
+	for(let y = 0; y < map.size; y++) {
+		for(let x = 0; x < map.size; x++) {
+			const tileImage = getTileImage(map.tilemap[y][x]);
+			ctx.drawImage(tileImage, x*16, y*16);
+		}
+	}
+	ctx.restore();
+}
+
+function tick() {
+	if(velocity.x !== 0 || velocity.y !== 0) {
+		camera.x += velocity.x;
+		camera.y += velocity.y;
+
+		draw();
+	}
+
+	window.requestAnimationFrame(tick);
+}
+
+document.onkeydown = function(e) {
+	switch(e.keyCode) {
+		case 39: velocity.x = 1; break; // right
+		case 37: velocity.x = -1; break; // left
+		case 38: velocity.y = -1; break; // up
+		case 40: velocity.y = 1; break; // down
+		default: console.log(e.keyCode);
+	}
+}
+
+document.onkeyup = function(e) {
+	switch(e.keyCode) {
+		case 39: case 37: velocity.x = 0; break; // right/left
+		case 38: case 40: velocity.y = 0; break; // up/down
+	}
+}
+
+
 </script>
 </body>
 </html>

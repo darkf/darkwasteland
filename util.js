@@ -6,3 +6,10 @@ function requestXML(path, callback) {
 	xhr.open("GET", path, true);
 	xhr.send();
 }
+
+function requestJSON(path, callback) {
+	const xhr = new XMLHttpRequest();
+	xhr.onload = function() { callback(JSON.parse(xhr.responseText)); }
+	xhr.open("GET", path, true);
+	xhr.send();
+}
