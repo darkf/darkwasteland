@@ -9,13 +9,17 @@
 <script src="map.js"></script>
 <script>
 const SCREEN_WIDTH = 800, SCREEN_HEIGHT = 640;
+const DIR_UP = 0, DIR_DOWN = 1, DIR_LEFT = 2, DIR_RIGHT = 3;
 const MAP_SCALE = 2;
 const camera = {x: 0, y: 0};
 const velocity = {x: 0, y: 0};
 const ctx = document.getElementById("canvas").getContext("2d");
 let game, map;
+let dirty = true;
 
 ctx.imageSmoothingEnabled = false; // disable image filtering/AA
+
+function vecAdd(a, b) { return {x: a.x + b.x, y: a.y + b.y}; }
 
 function centerCamera(tilePos) {
 	camera.x = tilePos.x*16*MAP_SCALE - SCREEN_WIDTH/2|0;
@@ -31,11 +35,10 @@ function draw() {
 	ctx.scale(MAP_SCALE, MAP_SCALE);
 	for(let y = 0; y < map.size; y++) {
 		for(let x = 0; x < map.size; x++) {
-			if(x !== game.partyPos.x || y !== game.partyPos.y) { // tile
-				const tileImage = getTileImage(map.tilemap[y][x]);
-				ctx.drawImage(tileImage, x*16, y*16);
-			}
-			else { // party
+			const tileImage = getTileImage(map.tilemap[y][x]);
+			ctx.drawImage(tileImage, x*16, y*16);
+
+			if(x === game.partyPos.x && y === game.partyPos.y) { // draw party
 				console.log("party @", x, y)
 				ctx.drawImage(getSpriteImage(7), x*16, y*16);
 			}
@@ -45,22 +48,47 @@ function draw() {
 }
 
 function tick() {
-	if(velocity.x !== 0 || velocity.y !== 0) {
+	if(dirty || velocity.x !== 0 || velocity.y !== 0) {
 		camera.x += velocity.x;
 		camera.y += velocity.y;
 
 		draw();
+		dirty = false;
 	}
 
 	window.requestAnimationFrame(tick);
 }
 
+function dirToVec(dir) {
+	switch(dir) {
+		case DIR_LEFT: return {x: -1, y: 0};
+		case DIR_RIGHT: return {x: 1, y: 0};
+		case DIR_UP: return {x: 0, y: -1};
+		case DIR_DOWN: return {x: 0, y: 1};
+		default: throw new Error("");
+	}
+}
+
+function moveParty(dir) {
+	game.partyPos = vecAdd(game.partyPos, dirToVec(dir));
+
+	dirty = true;
+}
+
 document.onkeydown = function(e) {
 	switch(e.keyCode) {
+		// camera controls
 		case 39: velocity.x = 1; break; // right
 		case 37: velocity.x = -1; break; // left
 		case 38: velocity.y = -1; break; // up
 		case 40: velocity.y = 1; break; // down
+
+		// movement controls
+		case 87: moveParty(DIR_UP); break; // W
+		case 65: moveParty(DIR_LEFT); break; // A
+		case 83: moveParty(DIR_DOWN); break; // S
+		case 68: moveParty(DIR_RIGHT); break; // D
+
 		default: console.log(e.keyCode);
 	}
 }
