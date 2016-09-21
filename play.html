@@ -14,7 +14,7 @@ const MAP_SCALE = 2;
 const camera = {x: 0, y: 0};
 const velocity = {x: 0, y: 0};
 const ctx = document.getElementById("canvas").getContext("2d");
-let game, map;
+let game;
 let dirty = true;
 
 ctx.imageSmoothingEnabled = false; // disable image filtering/AA
@@ -22,9 +22,11 @@ ctx.imageSmoothingEnabled = false; // disable image filtering/AA
 function centerCamera(tilePos) {
 	camera.x = tilePos.x*16*MAP_SCALE - SCREEN_WIDTH/2|0;
 	camera.y = tilePos.y*16*MAP_SCALE - SCREEN_HEIGHT/2|0;
+	dirty = true;
 }
 
 function draw() {
+	const map = game.map;
 	ctx.fillStyle = "white";
 	ctx.fillRect(0, 0, 800, 640);
 
@@ -34,6 +36,11 @@ function draw() {
 	for(let y = 0; y < map.size; y++) {
 		for(let x = 0; x < map.size; x++) {
 			const tileImage = getTileImage(map.tilemap[y][x]);
+			if(!tileImage) {
+				console.log("no tile image for tile", map.tilemap[y][x], "@", x, ",", y);
+				continue;
+			}
+
 			ctx.drawImage(tileImage, x*16, y*16);
 
 			if(x === game.partyPos.x && y === game.partyPos.y) { // draw party
@@ -47,8 +54,8 @@ function draw() {
 
 function tick() {
 	if(dirty || velocity.x !== 0 || velocity.y !== 0) {
-		camera.x += velocity.x;
-		camera.y += velocity.y;
+		camera.x += velocity.x * 5;
+		camera.y += velocity.y * 5;
 
 		draw();
 		dirty = false;
@@ -68,7 +75,7 @@ function dirToVec(dir) {
 }
 
 function moveParty(dir) {
-	gameMoveParty(game, dir);
+	gameMovePartyInDir(game, dir);
 	dirty = true;
 }
 

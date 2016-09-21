@@ -8,9 +8,12 @@ function gameFromXML(xml, callback) { // Parse savegame.xml
 
 	// load map
 	requestXML("data/gamedata1/map" + zeropad(mapId, 2) + ".xml", function(xml) {
+		const map = mapFromXML(xml);
+		map.id = mapId;
+
 		callback({ partyPos: {x: partyNode.getAttribute("x")|0,
 		                      y: partyNode.getAttribute("y")|0}
-		         , map: mapFromXML(xml)
+		         , map: map
 		         , npcs: Array.from(npcs).map(npc => {
 			         	return { id: npc.getAttribute("id")|0
 		         		       , name: npc.getAttribute("name")
@@ -20,19 +23,37 @@ function gameFromXML(xml, callback) { // Parse savegame.xml
 	});
 }
 
-function gameMoveParty(game, dir) {
+function gameLoadMap(game, mapId, callback) {
+	// load map
+	console.log("loading map", mapId);
+	requestXML("data/gamedata1/map" + zeropad(mapId, 2) + ".xml", function(xml) {
+		game.map = mapFromXML(xml);
+		game.map.id = mapId;
+
+		loadMapData(game.map, callback);
+	});	
+}
+
+function gameMoveParty(game, pos) {
 	const oldPos = vecCopy(game.partyPos);
-	game.partyPos = vecAdd(game.partyPos, dirToVec(dir));
+	game.partyPos = pos;
 
 	const actionClass = game.map.actionClassMap[game.partyPos.y][game.partyPos.x];
-	if(actionClass === 0) return; // no action
+	if(actionClass === 0) { // no action
+		return;
+		centerCamera(game.partyPos);
+	}
 	const actionId = game.map.actionMap[game.partyPos.y][game.partyPos.x];
 	const action = game.map.actions[actionClass][actionId];
 
 
 	if(!gameApplyAction(game, action)) // impassable, reset us
 		game.partyPos = oldPos;
+
+	centerCamera(game.partyPos);
 }
+
+function gameMovePartyInDir(game, dir) { return gameMoveParty(game, vecAdd(game.partyPos, dirToVec(dir))) }
 
 function gamePrintMessage(game, messageId) {
 	console.log("> " + game.map.strings[messageId]);
@@ -58,6 +79,44 @@ function gameApplyAction(game, action) {
 				gamePrintMessage(game, action.message);
 
 			return false; // impassable
+		}
+
+		case "transition": {
+			if(!action.confirm || confirm("Enter new location?")) { // perform transition
+				gamePrintMessage(game, action.message);
+
+				console.log("TODO: transition to map", action.targetMap, "@", action.targetX, ",", action.targetY);
+
+				// save our current (old) map position
+				game.map.oldPartyPos = vecCopy(game.partyPos);
+
+				// possibly update the action on the tile
+				if(action.newActionClass !== undefined)
+					game.map.actionClassMap[game.map.oldPartyPos.y][game.map.oldPartyPos.x] = action.newActionClass;
+				if(action.newAction !== undefined)
+					game.map.actionMap[game.map.oldPartyPos.y][game.map.oldPartyPos.x] = action.newAction;
+
+				// calculate new map position
+				let newPos;
+				if(action.relative)
+					newPos = {x: game.partyPos.x + (action.targetX || 0), y: game.partyPos.y + (action.targetY || 0)};
+				else
+					newPos = {x: action.targetX, y: action.targetY};
+
+				console.log("newPos: %o", newPos);
+
+				function postLoad() {
+					gameMoveParty(game, newPos);
+				}
+
+				// TODO: XXX: targetMap is actually a location ID, which needs to be converted via a lookup table, NOT a map ID!
+
+				if(action.targetMap !== game.map.id) // load another map, not the current one
+					gameLoadMap(game, action.targetMap, postLoad);
+				else postLoad();
+			}
+
+			return true; // we set position manually, don't let it force us back
 		}
 	}
 

@@ -12,6 +12,7 @@ function preloadTileset(tilesetNum, callback) {
 		return;
 	}
 
+	console.log("loading tileset", tilesetNum);
 	const tilesetBasePath = "data/tilesets/" + ("000" + tilesetNum).slice(-3) + "/";
 	const length = tilesetLengths[tilesetNum];
 	var loaded = 0;
