@@ -37,7 +37,12 @@ function mapFromXML(xml) {
 
 	for(const actionsNode of actionsNodes) {
 		const actionClass = parseInt(actionsNode.getAttribute("actionClass"), 16);
-		map.actions[actionClass] = Array.from(actionsNode.childNodes).filter(isntTextNode).map(xmlNodeToObject);
+		const actions = Array.from(actionsNode.childNodes).filter(isntTextNode).map(xmlNodeToObject);
+		map.actions[actionClass] = {};
+
+		for(const action of actions) {
+			map.actions[actionClass][action.id] = action;
+		}
 	}
 
 	map.strings = Array.from(mapNode.getElementsByTagName("string")).map(node => node.textContent);
