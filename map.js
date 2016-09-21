@@ -17,6 +17,29 @@ function mapFromXML(xml) {
 	                       	          .map(t => parseInt(t.replace("..", map.backgroundTile.toString(16)), 16)));
 	map.tilemap = tilemap;
 
+
+	const actionClassMap = mapNode.getElementsByTagName("actionClassMap")[0].textContent.trim()
+	                       .split("\n")
+	                       .map(s => s.trim().split("")
+	                       	          .map(t => parseInt(t.replace(".", "0"), 16)));
+	map.actionClassMap = actionClassMap;
+
+
+	const actionMap = mapNode.getElementsByTagName("actionMap")[0].textContent.trim()
+	                       .split("\n")
+	                       .map(s => s.trim()
+	                       	          .split(" ")
+	                       	          .map(t => parseInt(t.replace("..", "00"), 16)));
+	map.actionMap = actionMap;
+
+	const actionsNodes = mapNode.getElementsByTagName("actions");
+	map.actions = {};
+
+	for(const actionsNode of actionsNodes) {
+		const actionClass = parseInt(actionsNode.getAttribute("actionClass"), 16);
+		map.actions[actionClass] = Array.from(actionsNode.childNodes).filter(isntTextNode).map(xmlNodeToObject);
+	}
+
 	return map;
 }
 

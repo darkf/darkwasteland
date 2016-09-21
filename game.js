@@ -19,3 +19,19 @@ function gameFromXML(xml, callback) { // Parse savegame.xml
 		         });
 	});
 }
+
+function gameMoveParty(game, dir) {
+	game.partyPos = vecAdd(game.partyPos, dirToVec(dir));
+
+	const actionClass = game.map.actionClassMap[partyPos.y][partyPos.x];
+	const action = game.map.actionMap[partyPos.y][partyPos.x];
+
+	switch(actionClass) {
+		case 0: break; // no action
+		case 1: { // print, possibly change action class
+			console.log("print");
+
+			break;
+		}
+	}
+}

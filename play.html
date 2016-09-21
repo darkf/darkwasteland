@@ -70,8 +70,7 @@ function dirToVec(dir) {
 }
 
 function moveParty(dir) {
-	game.partyPos = vecAdd(game.partyPos, dirToVec(dir));
-
+	gameMoveParty(game, dir);
 	dirty = true;
 }
 
