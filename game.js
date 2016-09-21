@@ -21,17 +21,45 @@ function gameFromXML(xml, callback) { // Parse savegame.xml
 }
 
 function gameMoveParty(game, dir) {
+	const oldPos = vecCopy(game.partyPos);
 	game.partyPos = vecAdd(game.partyPos, dirToVec(dir));
 
-	const actionClass = game.map.actionClassMap[partyPos.y][partyPos.x];
-	const action = game.map.actionMap[partyPos.y][partyPos.x];
+	const actionClass = game.map.actionClassMap[game.partyPos.y][game.partyPos.x];
+	if(actionClass === 0) return; // no action
+	const actionId = game.map.actionMap[game.partyPos.y][game.partyPos.x];
+	const action = game.map.actions[actionClass][actionId];
 
-	switch(actionClass) {
-		case 0: break; // no action
-		case 1: { // print, possibly change action class
-			console.log("print");
+
+	if(!gameApplyAction(game, action)) // impassable, reset us
+		game.partyPos = oldPos;
+}
+
+function gamePrintMessage(game, messageId) {
+	console.log("> " + game.map.strings[messageId]);
+}
+
+function gameApplyAction(game, action) {
+	console.log("action:", action)
+
+	switch(action.tag) {
+		case "alteration": { // alter tile(s)
+			for(const child of action.children) {
+				assert(child.tag === "alter");
+
+				game.map.actionClassMap[child.y][child.x] = child.newActionClass;
+				game.map.actionMap[child.y][child.x] = child.newAction;
+			}
 
 			break;
 		}
+
+		case "impassable": { // impassable tile; possibly print
+			if(action.message !== undefined)
+				gamePrintMessage(game, action.message);
+
+			return false; // impassable
+		}
 	}
+
+	return true;
 }

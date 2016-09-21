@@ -18,6 +18,14 @@ function zeropad(n, length) {
 	return (new Array(length).fill("0").join("") + n).slice(-length)
 }
 
+function assert(cond) {
+	if(!cond)
+		throw new Error("Assertion failed");
+}
+
+function vecAdd(a, b) { return {x: a.x + b.x, y: a.y + b.y}; }
+function vecCopy(v) { return {x: v.x, y: v.y}; }
+
 function isTextNode(xml) { return xml.nodeType === 3; }
 function isntTextNode(xml) { return !isTextNode(xml); }
 

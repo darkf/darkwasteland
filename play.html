@@ -19,8 +19,6 @@ let dirty = true;
 
 ctx.imageSmoothingEnabled = false; // disable image filtering/AA
 
-function vecAdd(a, b) { return {x: a.x + b.x, y: a.y + b.y}; }
-
 function centerCamera(tilePos) {
 	camera.x = tilePos.x*16*MAP_SCALE - SCREEN_WIDTH/2|0;
 	camera.y = tilePos.y*16*MAP_SCALE - SCREEN_HEIGHT/2|0;

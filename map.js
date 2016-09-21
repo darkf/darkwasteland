@@ -40,6 +40,8 @@ function mapFromXML(xml) {
 		map.actions[actionClass] = Array.from(actionsNode.childNodes).filter(isntTextNode).map(xmlNodeToObject);
 	}
 
+	map.strings = Array.from(mapNode.getElementsByTagName("string")).map(node => node.textContent);
+
 	return map;
 }
 
