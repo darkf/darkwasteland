@@ -7,6 +7,8 @@ let $enctext = document.getElementById("enctext");
 let $gametext = document.getElementById("game-text");
 let $party = document.getElementById("party");
 
+let _shopItems;
+
 function uiShow() { $modalUI.style.display = "block"; }
 function uiHide() { $modalUI.style.display = "none"; }
 
@@ -36,6 +38,21 @@ function uiUpdateParty(game, callback) {
 }
 
 function uiBuy(game, char) {
+	$enctext.innerHTML = "";
+	uiEncounterLog("You have $" + char.money + "\n\n");
+	
+	let id = 0;
+	for(const item of _shopItems) {
+		if(item.stock === 0) continue;
+		id++;
+
+		const $el = document.createElement("DIV");
+		$el.innerText = id + ") " + item.id + " (type " + item.type + ")";
+		$el.onclick = function() {
+			// buy item
+		}
+		$enctext.appendChild($el);
+	}
 }
 
 function uiSell(game, char) {
@@ -70,8 +87,13 @@ function uiStoreSetPartyMember(game, char) { // char wants to enter the shop
 	$enctext.scrollTop += 999;
 }
 
-function uiStore(game) {
-	uiEncounterLog("\nWho wants to enter?\n");
-	uiUpdateParty(game, char => uiStoreSetPartyMember(game, char));
-	uiShow();
+function uiStore(game, action) {
+	const itemTypes = action.children.map(itemType => itemType.text|0);
+	requestShopItemList(game, action.itemList, function(items) {
+		_shopItems = items.filter(item => itemTypes.indexOf(item.type) !== -1);
+
+		uiEncounterLog("\nWho wants to enter?\n");
+		uiUpdateParty(game, char => uiStoreSetPartyMember(game, char));
+		uiShow();
+	});
 }

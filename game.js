@@ -103,7 +103,7 @@ function gameApplyAction(game, action) {
 
 		case "store": { // shop UI
 			//game.paused = true;
-			uiStore(game);
+			uiStore(game, action);
 
 			if(action.message !== undefined)
 				uiEncounterLog(game.map.strings[action.message]);
