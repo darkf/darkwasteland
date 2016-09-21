@@ -10,6 +10,7 @@ function gameFromXML(xml, callback) { // Parse savegame.xml
 	requestXML("data/gamedata1/map" + zeropad(mapId, 2) + ".xml", function(xml) {
 		const map = mapFromXML(xml);
 		map.id = mapId;
+		map.gameId = 1;
 
 		callback({ partyPos: {x: partyNode.getAttribute("x")|0,
 		                      y: partyNode.getAttribute("y")|0}
@@ -23,12 +24,13 @@ function gameFromXML(xml, callback) { // Parse savegame.xml
 	});
 }
 
-function gameLoadMap(game, mapId, callback) {
+function gameLoadMap(game, gameId, mapId, callback) {
 	// load map
 	console.log("loading map", mapId);
-	requestXML("data/gamedata1/map" + zeropad(mapId, 2) + ".xml", function(xml) {
+	requestXML("data/gamedata" + gameId + "/map" + zeropad(mapId, 2) + ".xml", function(xml) {
 		game.map = mapFromXML(xml);
 		game.map.id = mapId;
+		game.map.gameId = gameId;
 
 		loadMapData(game.map, callback);
 	});	
@@ -109,10 +111,12 @@ function gameApplyAction(game, action) {
 					gameMoveParty(game, newPos);
 				}
 
-				// TODO: XXX: targetMap is actually a location ID, which needs to be converted via a lookup table, NOT a map ID!
+				// targetMap is actually a location ID, which needs to be converted via a lookup table, NOT a map ID.
+				// We look it up here, and translate it into the proper game ID and map ID within that game.
+				const mapInfo = lookupLocation(action.targetMap);
 
-				if(action.targetMap !== game.map.id) // load another map, not the current one
-					gameLoadMap(game, action.targetMap, postLoad);
+				if(mapInfo.gameId !== game.map.gameId || mapInfo.gameMapId !== game.map.id) // load another map, not the current one
+					gameLoadMap(game, mapInfo.gameId, mapInfo.gameMapId, postLoad);
 				else postLoad();
 			}
 

@@ -48,3 +48,7 @@ function mapFromXML(xml) {
 function loadMapData(map, callback) {
 	preloadTileset(map.tilesetNum, callback);
 }
+
+function lookupLocation(locationId) {
+	return locationMap[locationId];
+}

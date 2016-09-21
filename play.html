@@ -14,6 +14,7 @@ const MAP_SCALE = 2;
 const camera = {x: 0, y: 0};
 const velocity = {x: 0, y: 0};
 const ctx = document.getElementById("canvas").getContext("2d");
+let locationMap;
 let game;
 let dirty = true;
 
@@ -105,19 +106,23 @@ document.onkeyup = function(e) {
 }
 
 function load() {
-	preloadSprites(function() {
-		requestXML("data/gamedata1/savegame.xml", function(xml) {
-			gameFromXML(xml, function(_game) {
-				game = _game;
-				map = game.map;
+	requestJSON("data/locationMap.json", function(_locationMap) {
+		locationMap = _locationMap;
 
-				console.log("map: %o", map);
-				loadMapData(map, function() {
-					centerCamera(game.partyPos);
-					draw();
-					tick();
+		preloadSprites(function() {
+			requestXML("data/gamedata1/savegame.xml", function(xml) {
+				gameFromXML(xml, function(_game) {
+					game = _game;
+					map = game.map;
+
+					console.log("map: %o", map);
+					loadMapData(map, function() {
+						centerCamera(game.partyPos);
+						draw();
+						tick();
+					})
 				})
-			})
+			});
 		});
 	});
 }
