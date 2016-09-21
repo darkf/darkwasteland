@@ -1,0 +1,67 @@
+body {
+	background-color: black;
+	font-family: sans-serif;
+	position: relative;
+}
+
+#game-box {
+	z-index: -1; /* draw below the modal UI */
+}
+
+#canvas {
+	border: 1px solid white;
+}
+
+.box {
+	border: 8px outset #9f9f9f;
+	background-color: black;
+	color: white;
+	padding: 2px;
+}
+
+/* Game UI */
+
+#game-ui {
+	width: calc(800px - 16px /* 2x 8px border */ + 2px /* canvas border */);
+	height: calc(480 - 16px + 2px);
+	position: absolute;
+	z-index: -2;
+}
+
+#game-text {
+	width: calc(800px - 16px /* 2x 8px border */ + 2px /* canvas border */);
+	height: 84px;
+	display: inline-block;
+	vertical-align: top;
+}
+
+/* Modal UI */
+
+#modal-ui {
+	width: calc(800px - 16px /* 2x 8px border */ + 2px /* canvas border */);
+	height: calc(600 - 16px + 2px);
+
+	display: none;
+}
+
+#top {
+	margin-bottom: 1px;
+}
+
+#portrait {
+	width: 96px;
+	height: 84px;
+	display: inline-block;
+	vertical-align: top;
+}
+
+#enctext {
+	width: calc(800px - 96px /* portrait */ - 16px - 16px /* borders */ - 32px /* extra, TODO: fixme */);
+	height: 84px;
+	display: inline-block;
+	vertical-align: top;
+}
+
+#party {
+	height: 120px;
+}

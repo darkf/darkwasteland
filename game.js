@@ -98,6 +98,12 @@ function gameApplyAction(game, action) {
 			break;
 		}
 
+		case "store": { // shop UI
+			//game.paused = true;
+			uiStore(game);
+			break;
+		}
+
 		case "transition": { // transition to another map/location
 			if(!action.confirm || confirm("Enter new location?")) { // perform transition
 				gamePrintMessage(game, action.message);

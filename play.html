@@ -1,14 +1,36 @@
 <!doctype html>
 <html>
+<head>
+<link rel="stylesheet" href="ui.css">
+</head>
 <body>
-<canvas id="canvas" width="800" height="640" style="border:1px solid black"></canvas>
+<!-- Game UI -->
+<div id="game-ui">
+	<div id="game-box" class="box">
+		<canvas id="canvas" width="800" height="480"></canvas>
+	</div>
+	<div id="game-text" class="box">Welcome to DarkWasteland!</div>
+</div>
+
+<!-- Modal UI for encounters / shops / doctors -->
+<div id="modal-ui">
+	<div id="top">
+		<div id="portrait" class="box">
+			<img id="portrait-image" width="96" height="84" alt="Portrait" title="Portrait">
+		</div>
+		<div id="enctext" class="box"></div>
+	</div>
+	<div id="party" class="box"></div>
+</div>
+
 
 <script src="util.js"></script>
 <script src="tileset.js"></script>
 <script src="game.js"></script>
 <script src="map.js"></script>
+<script src="ui.js"></script>
 <script>
-const SCREEN_WIDTH = 800, SCREEN_HEIGHT = 640;
+const SCREEN_WIDTH = 800, SCREEN_HEIGHT = 480;
 const DIR_UP = 0, DIR_DOWN = 1, DIR_LEFT = 2, DIR_RIGHT = 3;
 const MAP_SCALE = 2;
 const camera = {x: 0, y: 0};
@@ -28,7 +50,7 @@ function centerCamera(tilePos) {
 
 function draw() {
 	const map = game.map;
-	ctx.fillStyle = "white";
+	ctx.fillStyle = "black";
 	ctx.fillRect(0, 0, 800, 640);
 
 	ctx.save();
