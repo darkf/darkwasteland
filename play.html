@@ -115,6 +115,8 @@ document.onkeydown = function(e) {
 		case 83: moveParty(DIR_DOWN); break; // S
 		case 68: moveParty(DIR_RIGHT); break; // D
 
+		case 27: uiExit(); break; // Esc
+
 		default: console.log(e.keyCode);
 	}
 }

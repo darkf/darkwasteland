@@ -58,7 +58,9 @@ function gameMoveParty(game, pos) {
 function gameMovePartyInDir(game, dir) { return gameMoveParty(game, vecAdd(game.partyPos, dirToVec(dir))) }
 
 function gamePrintMessage(game, messageId) {
-	console.log("> " + game.map.strings[messageId]);
+	const message = game.map.strings[messageId];
+	console.log("> " + message);
+	uiGameLog(message);
 }
 
 function gameApplyAction(game, action) {
@@ -101,6 +103,9 @@ function gameApplyAction(game, action) {
 		case "store": { // shop UI
 			//game.paused = true;
 			uiStore(game);
+
+			if(action.message)
+				uiEncounterLog(game.map.strings[action.message]);
 			break;
 		}
 
