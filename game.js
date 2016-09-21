@@ -83,7 +83,22 @@ function gameApplyAction(game, action) {
 			return false; // impassable
 		}
 
-		case "transition": {
+		case "print": { // print a message
+			for(const child of action.children) {
+				assert(child.tag === "message");
+				gamePrintMessage(game, child.text|0);
+			}
+
+			// possibly update the action on the tile
+			if(action.newActionClass !== undefined)
+				game.map.actionClassMap[game.partyPos.y][game.partyPos.x] = action.newActionClass;
+			if(action.newAction !== undefined)
+				game.map.actionMap[game.partyPos.y][game.partyPos.x] = action.newAction;
+
+			break;
+		}
+
+		case "transition": { // transition to another map/location
 			if(!action.confirm || confirm("Enter new location?")) { // perform transition
 				gamePrintMessage(game, action.message);
 
