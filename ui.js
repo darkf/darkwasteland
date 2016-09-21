@@ -97,3 +97,31 @@ function uiStore(game, action) {
 		uiShow();
 	});
 }
+
+function uiDialogue(game, action) {
+	$enctext.innerHTML = "";
+	uiEncounterLog(gameGetMessage(game, action.message));
+
+	for(const answer of action.children) {
+		assert(answer.tag === "answer");
+		const message = gameGetMessage(game, answer.message);
+		console.log("-", message);
+
+		const $el = document.createElement("DIV");
+		$el.innerText = message;
+		$el.onclick = function() {
+			// update to the new action class
+			if(answer.newActionClass !== undefined)
+				game.map.actionClassMap[game.partyPos.y][game.partyPos.x] = answer.newActionClass;
+			if(answer.newAction !== undefined)
+				game.map.actionMap[game.partyPos.y][game.partyPos.x] = answer.newAction;
+
+			// walk in-place to trigger the new action
+			gameMoveParty(game, game.partyPos);
+		}
+
+		$enctext.appendChild($el);
+	}
+
+	uiShow();
+}
