@@ -4,7 +4,7 @@ function gameFromXML(xml, callback) { // Parse savegame.xml
 	const saveNode = xml.documentElement;
 	const partyNode = saveNode.getElementsByTagName("party")[0];
 	const mapId = partyNode.getAttribute("map")|0;
-	const npcs = saveNode.getElementsByTagName("character");
+	const characters = saveNode.getElementsByTagName("character");
 
 	// load map
 	requestXML("data/gamedata1/map" + zeropad(mapId, 2) + ".xml", function(xml) {
@@ -15,11 +15,12 @@ function gameFromXML(xml, callback) { // Parse savegame.xml
 		callback({ partyPos: {x: partyNode.getAttribute("x")|0,
 		                      y: partyNode.getAttribute("y")|0}
 		         , map: map
-		         , npcs: Array.from(npcs).map(npc => {
-			         	return { id: npc.getAttribute("id")|0
-		         		       , name: npc.getAttribute("name")
+		         , party: Array.from(characters).map(char => {
+			         	return { id: char.getAttribute("id")|0
+		         		       , name: char.getAttribute("name")
+		         		       , money: char.getAttribute("money")|0
 		         		       }
-         		        })
+         		        }).filter(char => char.name)
 		         });
 	});
 }
@@ -104,14 +105,15 @@ function gameApplyAction(game, action) {
 			//game.paused = true;
 			uiStore(game);
 
-			if(action.message)
+			if(action.message !== undefined)
 				uiEncounterLog(game.map.strings[action.message]);
 			break;
 		}
 
 		case "transition": { // transition to another map/location
 			if(!action.confirm || confirm("Enter new location?")) { // perform transition
-				gamePrintMessage(game, action.message);
+				if(action.message !== undefined)
+					gamePrintMessage(game, action.message);
 
 				console.log("TODO: transition to map", action.targetMap, "@", action.targetX, ",", action.targetY);
 

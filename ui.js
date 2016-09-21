@@ -24,8 +24,54 @@ function uiEncounterLog(message) {
 	$enctext.scrollTop += 999;
 }
 
-function uiStore(game) {
-	
+function uiUpdateParty(game, callback) {
+	$party.innerHTML = "";
 
+	for(const char of game.party) {
+		const $el = document.createElement("DIV");
+		$el.innerText = char.id + ") " + char.name;
+		$el.onclick = function() { if(callback) callback(char); }
+		$party.appendChild($el);
+	}
+}
+
+function uiBuy(game, char) {
+}
+
+function uiSell(game, char) {
+}
+
+function uiStoreSetPartyMember(game, char) { // char wants to enter the shop
+	uiEncounterLog("You have $" + char.money + "\n\n");
+	uiEncounterLog("Do you want to:\n");
+
+	// buy/sell buttons
+	const $buy = document.createElement("DIV");
+	const $sell = document.createElement("DIV");
+
+	$buy.innerText = "Buy"; $sell.innerText = "Sell";
+
+	$buy.onclick = function() {
+		$buy.onclick = null;
+		$sell.onclick = null;
+		console.log("buy mode");
+		uiBuy(game, char);
+	};
+
+	$sell.onclick = function() {
+		$buy.onclick = null;
+		$sell.onclick = null;
+		console.log("sell mode");
+		uiSell(game, char);
+	};
+
+	$enctext.appendChild($buy);
+	$enctext.appendChild($sell);
+	$enctext.scrollTop += 999;
+}
+
+function uiStore(game) {
+	uiEncounterLog("\nWho wants to enter?\n");
+	uiUpdateParty(game, char => uiStoreSetPartyMember(game, char));
 	uiShow();
 }
