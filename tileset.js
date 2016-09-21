@@ -1,6 +1,6 @@
 "use strict";
 
-let tilesetCache;
+let tilesetCache, spriteCache;
 let tilesetLengths;
 
 function preloadTileset(tilesetNum, callback) {
@@ -37,6 +37,35 @@ function preloadTileset(tilesetNum, callback) {
 	spin();
 }
 
+function preloadSprites(callback) {
+	spriteCache = new Array(10);
+	var loaded = 0;
+
+	for(let i = 0; i < 10; i++) {
+		const spriteImage = new Image();
+		spriteImage.onload = function() { loaded++; }
+		spriteImage.onerror = function() { throw new Error("Failed to load sprite image"); }
+		spriteImage.src = "data/sprites/" + zeropad(i, 3) + ".png";
+		spriteCache[i] = spriteImage;
+	}
+
+	// spin until loading has completed
+	function spin() {
+		console.log("spin: loaded=%o, length=%o", loaded, length)
+		if(loaded < length) // still loading
+			return setTimeout(spin, 300 /* ms */);
+
+		// done
+		callback();
+	}
+
+	spin();
+}
+
 function getTileImage(tileNum) {
 	return tilesetCache[tileNum - 10];
+}
+
+function getSpriteImage(spriteNum) {
+	return spriteCache[spriteNum];
 }

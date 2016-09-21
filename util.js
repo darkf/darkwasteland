@@ -13,3 +13,7 @@ function requestJSON(path, callback) {
 	xhr.open("GET", path, true);
 	xhr.send();
 }
+
+function zeropad(n, length) {
+	return (new Array(length).fill("0").join("") + n).slice(-length)
+}
