@@ -42,8 +42,8 @@ function gameMoveParty(game, pos) {
 
 	const actionClass = game.map.actionClassMap[game.partyPos.y][game.partyPos.x];
 	if(actionClass === 0) { // no action
-		return;
 		centerCamera(game.partyPos);
+		return;
 	}
 	const actionId = game.map.actionMap[game.partyPos.y][game.partyPos.x];
 	const action = game.map.actions[actionClass][actionId];

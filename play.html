@@ -45,7 +45,6 @@ function draw() {
 			ctx.drawImage(tileImage, x*16, y*16);
 
 			if(x === game.partyPos.x && y === game.partyPos.y) { // draw party
-				console.log("party @", x, y)
 				ctx.drawImage(getSpriteImage(7), x*16, y*16);
 			}
 		}
