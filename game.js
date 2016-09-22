@@ -146,6 +146,9 @@ function gameApplyAction(game, action) {
 
 			console.log("check: %o", action);
 
+			if(action.startMessage)
+				gamePrintMessage(game, action.startMessage);
+
 			if(true) { // passed check; for now, stubbed to always pass
 				if(action.passMessage !== undefined)
 					gamePrintMessage(game, action.passMessage);
