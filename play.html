@@ -70,6 +70,13 @@ function draw() {
 			if(x === game.partyPos.x && y === game.partyPos.y) { // draw party
 				ctx.drawImage(getSpriteImage(7), x*16, y*16);
 			}
+
+			const actionPair = mapGetActionPair(map, {x, y});
+			if(actionPair.actionClass === 3) { // draw a sprite for an encounter
+				// TODO: visibility
+				// TODO: draw proper sprite depending on monster
+				ctx.drawImage(getSpriteImage(1), x*16, y*16);
+			}
 		}
 	}
 	ctx.restore();

@@ -78,3 +78,8 @@ function mapSetActionPair(map, pos, actionClass, action) {
 
 	return changed;
 }
+
+function mapGetActionPair(map, pos) {
+	return { actionClass: map.actionClassMap[pos.y][pos.x],
+		     action: map.actionMap[pos.y][pos.x] };
+}
