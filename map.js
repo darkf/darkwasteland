@@ -57,3 +57,24 @@ function loadMapData(map, callback) {
 function lookupLocation(locationId) {
 	return locationMap[locationId];
 }
+
+function mapSetActionPair(map, pos, actionClass, action) {
+	// At the tile `pos`, set the action class and action.
+	// Returns true if the value set was different from the existing one.
+
+	const oldActionClass = map.actionClassMap[pos.y][pos.x];
+	const oldAction = map.actionMap[pos.y][pos.x];
+	let changed = false;
+
+	if(actionClass !== undefined && actionClass !== oldActionClass) {
+		map.actionClassMap[pos.y][pos.x] = actionClass;
+		changed = true;
+	}
+
+	if(action !== undefined && action !== oldAction) {
+		map.actionMap[pos.y][pos.x] = action;
+		changed = true;
+	}
+
+	return changed;
+}

@@ -119,6 +119,32 @@ function gameApplyAction(game, action) {
 			break;
 		}
 
+		case "check": {
+			if(!action.autoCheck) // we only perform auto-check checks here
+				break;
+
+			const checks = action.children;
+
+			// TODO: how does modifierTarget work?
+			// TODO: how does check "difficulty" / rolling work?
+
+			console.log("check: %o", action);
+
+			if(true) { // passed check; for now, stubbed to always pass
+				if(action.passMessage !== undefined)
+					gamePrintMessage(game, action.passMessage);
+
+				// passed, set up new action pairs
+				if(mapSetActionPair(game.map, game.partyPos, action.passNewActionClass, action.passNewAction)) {
+					// was changed; walk in-place to trigger the new action (TODO: is this the correct behavior?)
+					gameMoveParty(game, game.partyPos);
+				}
+
+			}
+
+			break;
+		}
+
 		case "transition": { // transition to another map/location
 			if(!action.confirm || confirm("Enter new location?")) { // perform transition
 				if(action.message !== undefined)
