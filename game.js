@@ -73,13 +73,18 @@ function gameApplyAction(game, action) {
 
 	switch(action.tag) {
 		case "alteration": { // alter tile(s)
+			// emit a message
+			if(action.message)
+				gamePrintMessage(game, action.message);
+
+			// alter target tiles
 			for(const child of action.children) {
 				assert(child.tag === "alter");
-
-				game.map.actionClassMap[child.y][child.x] = child.newActionClass;
-				game.map.actionMap[child.y][child.x] = child.newAction;
+				mapSetActionPair(game.map, {x: child.x, y: child.y}, child.newActionClass, child.newAction);
 			}
 
+			// possibly alter current tile
+			mapSetActionPair(game.map, game.partyPos, action.newActionClass, action.newAction);
 			break;
 		}
 
@@ -119,9 +124,20 @@ function gameApplyAction(game, action) {
 			break;
 		}
 
+		case "encounter": {
+			if(action.friendly) // friendly NPCs can't be stepped into
+				return false;
+
+			// TODO: encounters
+
+			break;
+		}
+
 		case "check": {
-			if(!action.autoCheck) // we only perform auto-check checks here
-				break;
+			if(!action.autoCheck) { // we only perform auto-check checks here
+				// for debugging purposes, this is actually useful to allow use checks too
+				//break;
+			}
 
 			const checks = action.children;
 
