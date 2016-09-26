@@ -62,6 +62,9 @@ function mapSetActionPair(map, pos, actionClass, action) {
 	// At the tile `pos`, set the action class and action.
 	// Returns true if the value set was different from the existing one.
 
+	assert(pos.x >= 0 && pos.x < map.size);
+	assert(pos.y >= 0 && pos.y < map.size);
+
 	const oldActionClass = map.actionClassMap[pos.y][pos.x];
 	const oldAction = map.actionMap[pos.y][pos.x];
 	let changed = false;

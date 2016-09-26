@@ -19,8 +19,10 @@ function zeropad(n, length) {
 }
 
 function assert(cond) {
-	if(!cond)
+	if(!cond) {
+		debugger;
 		throw new Error("Assertion failed");
+	}
 }
 
 function vecAdd(a, b) { return {x: a.x + b.x, y: a.y + b.y}; }
