@@ -165,11 +165,11 @@ function gameApplyAction(game, action) {
 		}
 
 		case "transition": { // transition to another map/location
-			if(!action.confirm || confirm("Enter new location?")) { // perform transition
-				if(action.message !== undefined)
-					gamePrintMessage(game, action.message);
+			if(action.message !== undefined)
+				gamePrintMessage(game, action.message);
 
-				console.log("TODO: transition to map", action.targetMap, "@", action.targetX, ",", action.targetY);
+			if(!action.confirm || confirm("Enter new location?")) { // perform transition
+				console.log("Transitioning to map", action.targetMap, "@", action.targetX, ",", action.targetY);
 
 				// save our current (old) map position
 				game.map.oldPartyPos = vecCopy(game.partyPos);
