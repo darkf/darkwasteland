@@ -80,7 +80,17 @@ function gameApplyAction(game, action) {
 			// alter target tiles
 			for(const child of action.children) {
 				assert(child.tag === "alter");
-				mapSetActionPair(game.map, {x: child.x, y: child.y}, child.newActionClass, child.newAction);
+
+				// TODO: Does the case when x/y are not specified refer to
+				// the *current* (before stepping) tile, or the tile after stepping?
+
+				let pos;
+				if(child.x !== undefined && child.y !== undefined)
+					pos = {x: child.x, y: child.y};
+				else
+					pos = vecCopy(game.partyPos);
+
+				mapSetActionPair(game.map, pos, child.newActionClass, child.newAction);
 			}
 
 			// possibly alter current tile
