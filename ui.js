@@ -114,14 +114,11 @@ function uiDialogue(game, action) {
 			// TODO: Don't do this on non-menu dialogue when we implement that
 			uiHide();
 
-			// update to the new action class
-			if(answer.newActionClass !== undefined)
-				game.map.actionClassMap[game.partyPos.y][game.partyPos.x] = answer.newActionClass;
-			if(answer.newAction !== undefined)
-				game.map.actionMap[game.partyPos.y][game.partyPos.x] = answer.newAction;
-
-			// walk in-place to trigger the new action
-			gameMoveParty(game, game.partyPos);
+			// possibly update to the new action class
+			if(mapSetActionPair(game.map, game.partyPos, answer.newActionClass, answer.newAction)) {
+				// walk in-place to trigger the new action
+				gameMoveParty(game, game.partyPos);
+			}
 		}
 
 		$enctext.appendChild($el);

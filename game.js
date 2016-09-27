@@ -95,6 +95,8 @@ function gameApplyAction(game, action) {
 
 			// possibly alter current tile
 			mapSetActionPair(game.map, game.partyPos, action.newActionClass, action.newAction);
+
+			// TODO: Does this take effect immediately (i.e. do we need to walk in-place)?
 			break;
 		}
 
@@ -112,10 +114,7 @@ function gameApplyAction(game, action) {
 			}
 
 			// possibly update the action on the tile
-			if(action.newActionClass !== undefined)
-				game.map.actionClassMap[game.partyPos.y][game.partyPos.x] = action.newActionClass;
-			if(action.newAction !== undefined)
-				game.map.actionMap[game.partyPos.y][game.partyPos.x] = action.newAction;
+			mapSetActionPair(game.map, game.partyPos, action.newActionClass, action.newAction);
 
 			break;
 		}
@@ -184,11 +183,8 @@ function gameApplyAction(game, action) {
 				// save our current (old) map position
 				game.map.oldPartyPos = vecCopy(game.partyPos);
 
-				// possibly update the action on the tile
-				if(action.newActionClass !== undefined)
-					game.map.actionClassMap[game.map.oldPartyPos.y][game.map.oldPartyPos.x] = action.newActionClass;
-				if(action.newAction !== undefined)
-					game.map.actionMap[game.map.oldPartyPos.y][game.map.oldPartyPos.x] = action.newAction;
+				// possibly update the action on the old tile
+				mapSetActionPair(game.map, game.map.oldPartyPos, action.newActionClass, action.newAction);
 
 				// calculate new map position
 				let newPos;
