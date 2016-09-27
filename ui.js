@@ -110,6 +110,10 @@ function uiDialogue(game, action) {
 		const $el = document.createElement("DIV");
 		$el.innerText = message;
 		$el.onclick = function() {
+			// close UI
+			// TODO: Don't do this on non-menu dialogue when we implement that
+			uiHide();
+
 			// update to the new action class
 			if(answer.newActionClass !== undefined)
 				game.map.actionClassMap[game.partyPos.y][game.partyPos.x] = answer.newActionClass;
