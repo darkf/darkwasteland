@@ -91,10 +91,18 @@ function gameApplyAction(game, action) {
 					pos = vecCopy(game.partyPos);
 
 				mapSetActionPair(game.map, pos, child.newActionClass, child.newAction);
+
+				if(pos.x === game.partyPos.x && pos.y === game.partyPos.y) {
+					// was changed; walk in-place to trigger the new action (TODO: is this the correct behavior?)
+					gameMoveParty(game, game.partyPos);
+				}
 			}
 
 			// possibly alter current tile
-			mapSetActionPair(game.map, game.partyPos, action.newActionClass, action.newAction);
+			if(mapSetActionPair(game.map, game.partyPos, action.newActionClass, action.newAction)) {
+				// was changed; walk in-place to trigger the new action (TODO: is this the correct behavior?)
+				gameMoveParty(game, game.partyPos);
+			}
 
 			// TODO: Does this take effect immediately (i.e. do we need to walk in-place)?
 			break;
@@ -114,7 +122,10 @@ function gameApplyAction(game, action) {
 			}
 
 			// possibly update the action on the tile
-			mapSetActionPair(game.map, game.partyPos, action.newActionClass, action.newAction);
+			if(mapSetActionPair(game.map, game.partyPos, action.newActionClass, action.newAction)) {
+				// was changed; walk in-place to trigger the new action (TODO: is this the correct behavior?)
+				gameMoveParty(game, game.partyPos);
+			}
 
 			break;
 		}
