@@ -27,11 +27,12 @@ function preloadTileset(tilesetNum, callback) {
 
 	// spin until loading has completed
 	function spin() {
-		console.log("spin: loaded=%o, length=%o", loaded, length)
+		console.log("spin: loaded=%o, length=%o", loaded, length);
 		if(loaded < length) // still loading
 			return setTimeout(spin, 300 /* ms */);
 
 		// done
+		console.log("preloadTileset: done loading", length, "tiles");
 		callback();
 	}
 

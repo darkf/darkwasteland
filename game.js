@@ -213,6 +213,7 @@ function gameApplyAction(game, action) {
 				// targetMap is actually a location ID, which needs to be converted via a lookup table, NOT a map ID.
 				// We look it up here, and translate it into the proper game ID and map ID within that game.
 				const mapInfo = lookupLocation(action.targetMap);
+				assert(mapInfo);
 
 				if(mapInfo.gameId !== game.map.gameId || mapInfo.gameMapId !== game.map.id) // load another map, not the current one
 					gameLoadMap(game, mapInfo.gameId, mapInfo.gameMapId, postLoad);

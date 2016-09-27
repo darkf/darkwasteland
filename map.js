@@ -55,7 +55,7 @@ function loadMapData(map, callback) {
 }
 
 function lookupLocation(locationId) {
-	return locationMap[locationId];
+	return locationMap[locationId] || null;
 }
 
 function mapSetActionPair(map, pos, actionClass, action) {
