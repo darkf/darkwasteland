@@ -52,6 +52,11 @@ function mapFromXML(xml) {
 		map.monsters[obj.id] = obj;
 	});
 
+	const combatStringsNode = mapNode.getElementsByTagName("battleStrings")[0];
+	map.combatStrings = new Array(37);
+	for(let i = 0; i < map.combatStrings.length; i++)
+		map.combatStrings[i] = combatStringsNode.getAttribute("s" + i)|0;
+
 	return map;
 }
 
