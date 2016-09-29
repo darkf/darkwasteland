@@ -126,7 +126,7 @@ function uiEncounter(game, action, encounterFinishedCallback) {
 	function next(cur) {
 		if(cur === numChars) {
 			uiEncounterLog("Use these options?");
-			uiOptions([ ["Y", () => { console.log("TODO: execute combat turn"); }]
+			uiOptions([ ["Y", () => { combatExecuteTurn(game); }]
 				      , ["N", () => { next(0); }]
 				      ]);
 		}

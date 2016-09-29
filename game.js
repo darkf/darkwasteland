@@ -174,7 +174,11 @@ function gameApplyAction(game, action) {
 
 			uiEncounterLog("1 " + monster.name + " appears at XX feet.\\r");
 
+			combatBeginEncounter(game, monster);
+
 			uiEncounter(game, action, () => { // encounter is done
+				combatEndEncounter(game);
+
 				// TODO: set new action pair
 			});
 
