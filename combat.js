@@ -17,14 +17,20 @@ function combatRollDamage(d6) {
 }
 
 function combatDamage(opponent, damage) {
+	// TODO: take into account AC (armor)
 	opponent.stats.con -= damage;
 	return opponent.stats.con >= 0;
 }
 
 function combatAttack(game, attacker, opponent) {
-	uiEncounterLog(attacker.name + " " + combatGetBattleMessage(game, 0) + " " + opponent.name + "\\r");
+	// TODO: expend ammo
+	// TODO: take into account ammo type for damage
 
-	// TODO: roll/apply damage
+	const damage =  combatRollDamage(attacker.weapon.damage);
+	combatDamage(opponent, damage);
+
+	uiEncounterLog(attacker.name + " " + combatGetBattleMessage(game, 0) + " " + opponent.name);
+	uiEncounterLog(" for " + damage + " points of damage.\\r");
 }
 
 function combatMonsterAttack(game, monster, opponent) {

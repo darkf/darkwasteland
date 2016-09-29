@@ -170,6 +170,7 @@ function gameApplyAction(game, action) {
 			const monster = Object.assign({}, game.map.monsters[action.monster1]);
 			monster.name = monster.name.split("\\n")[0]; // TODO: regard `action.properName` property
 			monster.weapon = getMonsterWeapon(monster);
+			monster.stats = {con: 10}; // TODO: fill in stats
 
 			console.log("Monster: %o with weapon: %o", monster, monster.weapon);
 
