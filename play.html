@@ -149,6 +149,8 @@ function load() {
 
 					console.log("map: %o", map);
 					loadMapData(map, function() {
+						// game.partyPos = {x: 26, y: 9}; // DEBUG
+						game.partyPos = {x: 26, y: 5}; // DEBUG
 						centerCamera(game.partyPos);
 						draw();
 						tick();
