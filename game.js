@@ -165,6 +165,7 @@ function gameApplyAction(game, action) {
 
 			// TODO: encounter groups, and separate party groups
 			// TODO: separate UI for the box telling the player an encounter is beginning.
+			// TODO: support multiple encounter groups
 
 			assert(action.monster1 in game.map.monsters);
 			const monster = Object.assign({}, game.map.monsters[action.monster1]);

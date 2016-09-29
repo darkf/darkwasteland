@@ -18,6 +18,8 @@ function combatRollDamage(d6) {
 
 function combatDamage(opponent, damage) {
 	// TODO: take into account AC (armor)
+	// TODO: set dead flag on opponent
+
 	opponent.stats.con -= damage;
 	return opponent.stats.con >= 0;
 }
@@ -25,6 +27,8 @@ function combatDamage(opponent, damage) {
 function combatAttack(game, attacker, opponent) {
 	// TODO: expend ammo
 	// TODO: take into account ammo type for damage
+	// TODO: handle death
+	// TODO: correct combat strings
 
 	const damage =  combatRollDamage(attacker.weapon.damage);
 	combatDamage(opponent, damage);
@@ -39,6 +43,9 @@ function combatMonsterAttack(game, monster, opponent) {
 	// reloading their weapons, and just have fixed damage amounts + random damage rolls.
 	// As such, we can run simplified logic here, for monsters.
 
+	// TODO: handle death
+	// TODO: correct combat strings
+
 	const damage = monster.weapon.fixedDamage + combatRollDamage(monster.weapon.randomDamage);
 	combatDamage(opponent, damage);
 
@@ -52,6 +59,12 @@ function combatExecuteTurn(game) {
 
 	// TODO: combat intiative/speed, for turn order
 	// for now we just assume the party goes first, in order, and then the monster gets a turn
+
+	// TODO: End encounter after either the entire party dies, or all of the opponents die
+	// TODO: Implement CON regen, and consciousness states (conscious, unconscious, dead, etc.)
+	// TODO: Support multiple encounter groups
+	// TODO: Support multiple parties
+	// TODO: Support more than just the 'Attack' command for PCs
 
 	// Party attacks monster
 	for(const char of game.party) {

@@ -122,6 +122,8 @@ function uiEncounter(game, action, encounterFinishedCallback) {
 	// Start at the encounter's main menu, cycling characters in the party
 	// asking for what action they should take.
 
+	// TODO: Actually save the chosen options somewhere (probably in game.encounter).
+
 	const numChars = game.party.length;
 	function next(cur) {
 		if(cur === numChars) {
@@ -136,14 +138,17 @@ function uiEncounter(game, action, encounterFinishedCallback) {
 	next(0);
 }
 
-function uiAttack(game, char, attackFinishedCallback) {
-}
-
 function uiEncounterMainMenu(game, char, optionChosenCallback) {
 	uiUpdateParty(game, null);
 
 	uiEncounterLog(char.name + ", choose:\\r");
 	uiEncounterLog("");
+
+	// TODO: Relevant messages, such as reminding the player to reload/unjam their weapon.
+	// TODO: Implement remaining options.
+	// TODO: Support multiple parties
+	// TODO: Support multiple monsters (and selection of them)
+	// TODO: Support multiple encounter groups
 
 	uiBeginOptions();
 		// uiOption("Run", null);
