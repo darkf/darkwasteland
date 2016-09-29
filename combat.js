@@ -6,6 +6,21 @@ function combatEndEncounter(game) { game.encounter = null; }
 
 function combatGetBattleMessage(game, id) { return gameGetMessage(game, game.map.combatStrings[id]); }
 
+function combatRollDamage(d6) {
+	// For combat rolls, we sum rolls of Xd6.
+
+	let sum = 0;
+	for(let i = 0; i < d6; i++)
+		sum += getRandomInt(1, 6+1); // Roll and sum a random integer in the range [1,6]
+
+	return sum;
+}
+
+function combatDamage(opponent, damage) {
+	opponent.stats.con -= damage;
+	return opponent.stats.con >= 0;
+}
+
 function combatAttack(game, attacker, opponent) {
 	uiEncounterLog(attacker.name + " " + combatGetBattleMessage(game, 0) + " " + opponent.name + "\\r");
 
@@ -18,7 +33,11 @@ function combatMonsterAttack(game, monster, opponent) {
 	// reloading their weapons, and just have fixed damage amounts + random damage rolls.
 	// As such, we can run simplified logic here, for monsters.
 
-	uiEncounterLog(monster.name + " " + combatGetBattleMessage(game, 0) + " " + opponent.name + "\\r");
+	const damage = monster.weapon.fixedDamage + combatRollDamage(monster.weapon.randomDamage);
+	combatDamage(opponent, damage);
+
+	uiEncounterLog(monster.name + " " + combatGetBattleMessage(game, 0) + " " + opponent.name);
+	uiEncounterLog(" for " + damage + " points of damage.\\r");
 }
 
 function combatExecuteTurn(game) {

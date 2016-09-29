@@ -14,6 +14,12 @@ function requestJSON(path, callback) {
 	xhr.send();
 }
 
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
 function zeropad(n, length) {
 	return (new Array(length).fill("0").join("") + n).slice(-length)
 }

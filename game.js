@@ -22,6 +22,7 @@ function gameFromXML(xml, callback) { // Parse savegame.xml
 		         		       , money: char.getAttribute("money")|0
 		         		       , inventory: Array.from(char.getElementsByTagName("item")).map(item => getItemById(item.getAttribute("id"))).filter(x => x)
 		         		       , weapon: null
+		         		       , stats: {con: 30}
 		         		       }
          		        }).filter(char => char.name)
 		         });

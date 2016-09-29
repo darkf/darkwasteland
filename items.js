@@ -25,7 +25,8 @@ function getItemById(itemId) {
 }
 
 function getMonsterWeapon(monster) {
-    const weapon = {randomDamage: monster.randomDamage};
+    const weapon = {randomDamage: monster.randomDamage,
+                    fixedDamage: monster.fixedDamage || 0};
 
     switch(monster.weaponType) {
         case 1:
