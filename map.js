@@ -47,6 +47,11 @@ function mapFromXML(xml) {
 
 	map.strings = Array.from(mapNode.getElementsByTagName("string")).map(node => node.textContent);
 
+	map.monsters = {};
+	Array.from(mapNode.getElementsByTagName("monster")).map(xmlNodeToObject).forEach(obj => {
+		map.monsters[obj.id] = obj;
+	});
+
 	return map;
 }
 
