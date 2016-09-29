@@ -14,11 +14,14 @@ function gameFromXML(xml, callback) { // Parse savegame.xml
 
 		callback({ partyPos: {x: partyNode.getAttribute("x")|0,
 		                      y: partyNode.getAttribute("y")|0}
+		         , encounter: null
 		         , map: map
 		         , party: Array.from(characters).map(char => {
 			         	return { id: char.getAttribute("id")|0
 		         		       , name: char.getAttribute("name")
 		         		       , money: char.getAttribute("money")|0
+		         		       , inventory: Array.from(char.getElementsByTagName("item")).map(item => getItemById(item.getAttribute("id"))).filter(x => x)
+		         		       , weapon: null
 		         		       }
          		        }).filter(char => char.name)
 		         });
@@ -152,15 +155,24 @@ function gameApplyAction(game, action) {
 			if(action.message !== undefined)
 				uiEncounterLog(gameGetMessage(game, action.message));
 
+			// Ensure the party members have weapons equipped, or equip one for them.
+			// TODO: This should not be necessary after we use the proper saved equipped weapon.
+			for(const char of game.party) {
+				if(!char.weapon)
+					char.weapon = char.inventory.filter(item => item.type === "weapon")[0] || null;
+			}
+
 			// TODO: encounter groups, and separate party groups
 			// TODO: separate UI for the box telling the player an encounter is beginning.
 
-			const monster = game.map.monsters[action.monster1];
-			assert(monster);
+			assert(action.monster1 in game.map.monsters);
+			const monster = Object.assign({}, game.map.monsters[action.monster1]);
+			monster.name = monster.name.split("\\n")[0]; // TODO: regard `action.properName` property
+			monster.weapon = getMonsterWeapon(monster);
 
-			const monsterName = monster.name.split("\\n")[0]; // TODO: regard `action.properName` property
+			console.log("Monster: %o with weapon: %o", monster, monster.weapon);
 
-			uiEncounterLog("1 " + monsterName + " appears at XX feet.\\r");
+			uiEncounterLog("1 " + monster.name + " appears at XX feet.\\r");
 
 			uiEncounter(game, action, () => { // encounter is done
 				// TODO: set new action pair
