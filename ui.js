@@ -26,6 +26,8 @@ function uiEncounterLog(message) {
 	$enctext.scrollTop += 999;
 }
 
+function uiClearEncounterLog() { $enctext.innerHTML = ""; }
+
 function uiUpdateParty(game, callback) {
 	$party.innerHTML = "";
 
@@ -97,6 +99,63 @@ function uiStore(game, action) {
 		uiShow();
 	});
 }
+
+function uiBeginOptions() { }
+function uiEndOptions() { }
+function uiOption(optionTitle, callback) {
+	// TODO: also set up numbers for using the keyboard
+	const $el = document.createElement("DIV");
+	$el.innerText = optionTitle;
+	$el.onclick = function() { callback(); }
+	$enctext.appendChild($el);
+}
+function uiOptions(options) {
+	uiBeginOptions();
+	for(const option of options)
+		uiOption(option[0], option[1]);
+	uiEndOptions();
+}
+
+function uiEncounter(game, action, encounterFinishedCallback) {
+	uiShow();
+
+	// Start at the encounter's main menu, cycling characters in the party
+	// asking for what action they should take.
+
+	const numChars = game.party.length;
+	function next(cur) {
+		if(cur === numChars) {
+			uiEncounterLog("Use these options?");
+			uiOptions([ ["Y", () => { console.log("TODO: execute combat turn"); }]
+				      , ["N", () => { next(0); }]
+				      ]);
+		}
+		else
+			uiEncounterMainMenu(game, game.party[cur], () => { uiClearEncounterLog(); next(cur+1); });
+	}
+	next(0);
+}
+
+function uiAttack(game, char, attackFinishedCallback) {
+}
+
+function uiEncounterMainMenu(game, char, optionChosenCallback) {
+	uiUpdateParty(game, null);
+
+	uiEncounterLog(char.name + ", choose:\\r");
+	uiEncounterLog("");
+
+	uiBeginOptions();
+		// uiOption("Run", null);
+		// uiOption("Use", null);
+		// uiOption("Hire", null);
+		// uiOption("Evade", null);
+		uiOption("Attack", () => { optionChosenCallback(); }); // TODO: current encounter context
+		// uiOption("Weapon", null);
+		// uiOption("Load/unjam", null);
+	uiEndOptions();
+}
+
 
 function uiDialogue(game, action) {
 	$enctext.innerHTML = "";

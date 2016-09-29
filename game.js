@@ -149,6 +149,22 @@ function gameApplyAction(game, action) {
 				return false;
 
 			// TODO: encounters
+			if(action.message !== undefined)
+				uiEncounterLog(gameGetMessage(game, action.message));
+
+			// TODO: encounter groups, and separate party groups
+			// TODO: separate UI for the box telling the player an encounter is beginning.
+
+			const monster = game.map.monsters[action.monster1];
+			assert(monster);
+
+			const monsterName = monster.name.split("\\n")[0]; // TODO: regard `action.properName` property
+
+			uiEncounterLog("1 " + monsterName + " appears at XX feet.\\r");
+
+			uiEncounter(game, action, () => { // encounter is done
+				// TODO: set new action pair
+			});
 
 			break;
 		}
