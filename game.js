@@ -178,6 +178,7 @@ function gameApplyAction(game, action) {
 
 			console.log("Monster: %o with weapon: %o", monster, monster.weapon);
 
+			uiClearEncounterLog();
 			uiEncounterLog("1 " + monster.name + " appears at XX feet.\\r");
 
 			combatBeginEncounter(game, monster);
