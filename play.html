@@ -69,10 +69,7 @@ function draw() {
 
 			ctx.drawImage(tileImage, x*16, y*16);
 
-			if(x === game.partyPos.x && y === game.partyPos.y) { // draw party
-				ctx.drawImage(getSpriteImage(7), x*16, y*16);
-			}
-
+			// maybe draw sprites depending on the tile action
 			const actionPair = mapGetActionPair(map, {x, y});
 			if(actionPair.actionClass === 3) { // draw a sprite for an encounter
 				// TODO: visibility
@@ -82,6 +79,16 @@ function draw() {
 			else if(actionPair.actionClass === 9) { // draw radiation symbol
 				ctx.drawImage(getSpriteImage(8), x*16, y*16);
 			}
+			else if(actionPair.actionClass === 4) { // masked tile (cover it with another)
+				const newTileId = game.map.actions[actionPair.actionClass][actionPair.action].tile;
+				ctx.drawImage(getTileImage(newTileId), x*16, y*16);
+			}
+
+			// draw party (TODO: alternate groups)
+			if(x === game.partyPos.x && y === game.partyPos.y) {
+				ctx.drawImage(getSpriteImage(7), x*16, y*16);
+			}
+
 		}
 	}
 	ctx.restore();
