@@ -63,13 +63,12 @@ function draw() {
 	ctx.scale(MAP_SCALE, MAP_SCALE);
 	for(let y = 0; y < map.size; y++) {
 		for(let x = 0; x < map.size; x++) {
-			const tileImage = getTileImage(map.tilemap[y][x]);
-			if(!tileImage) {
+			const offset = getTilesetOffsetOf(game, map.tilemap[y][x]);
+			if(!offset) {
 				console.log("no tile image for tile", map.tilemap[y][x], "@", x, ",", y);
 				continue;
 			}
-
-			ctx.drawImage(tileImage, x*16, y*16);
+			ctx.drawImage(tilesetImage, offset.x, offset.y, 16, 16, x*16, y*16, 16, 16);
 
 			// maybe draw sprites depending on the tile action
 			const actionPair = mapGetActionPair(map, {x, y});
@@ -83,9 +82,9 @@ function draw() {
 			}
 			else if(actionPair.actionClass === 4) { // masked tile (cover it with another)
 				const newTileId = game.map.actions[actionPair.actionClass][actionPair.action].tile;
-				const newTileImage = getTileImage(newTileId);
-				if(newTileImage)
-					ctx.drawImage(getTileImage(newTileId), x*16, y*16);
+				const offset = getTilesetOffsetOf(game, newTileId);
+				if(offset)
+					ctx.drawImage(tilesetImage, offset.x, offset.y, 16, 16, x*16, y*16, 16, 16);
 				else
 					console.log("no tile image for masked tile", newTileId, "@", x, ",", y);
 			}

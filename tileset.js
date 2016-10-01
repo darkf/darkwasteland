@@ -1,6 +1,6 @@
 "use strict";
 
-let tilesetCache, spriteCache;
+let tilesetImage, spriteCache;
 let tilesetLengths;
 
 function preloadTileset(tilesetNum, callback) {
@@ -13,30 +13,14 @@ function preloadTileset(tilesetNum, callback) {
 	}
 
 	console.log("loading tileset", tilesetNum);
-	const tilesetBasePath = "data/tilesets/" + ("000" + tilesetNum).slice(-3) + "/";
-	const length = tilesetLengths[tilesetNum];
-	var loaded = 0;
-	tilesetCache = new Array(length);
-	for(let i = 0; i < length; i++) {
-		const tileImage = new Image();
-		tileImage.onload = function() { loaded++; }
-		tileImage.onerror = function() { throw new Error("Failed to load tile image"); }
-		tileImage.src = tilesetBasePath + ("000" + i).slice(-3) + ".png";
-		tilesetCache[i] = tileImage;
-	}
 
-	// spin until loading has completed
-	function spin() {
-		console.log("spin: loaded=%o, length=%o", loaded, length);
-		if(loaded < length) // still loading
-			return setTimeout(spin, 300 /* ms */);
-
-		// done
-		console.log("preloadTileset: done loading", length, "tiles");
+	tilesetImage = new Image();
+	tilesetImage.onload = function() {
+		console.log("preloadTileset: done loading tileset", tilesetNum);
 		callback();
 	}
-
-	spin();
+	tilesetImage.onerror = function() { throw new Error("Failed to load tileset " + tilesetNum); }
+	tilesetImage.src = "data/tilesets/" + tilesetNum + ".png";
 }
 
 function preloadSprites(callback) {
@@ -64,8 +48,17 @@ function preloadSprites(callback) {
 	spin();
 }
 
-function getTileImage(tileNum) {
-	return tilesetCache[tileNum - 10];
+function getTilesetOffsetOf(game, tileNum) {	
+	const index = tileNum - 10;
+
+	if(index < 0 || index >= getTilesetLength(game.map.tilesetNum))
+		return null;
+
+	return {x: index*16, y: 0};
+}
+
+function getTilesetLength(tilesetNum) {
+	return tilesetLengths[tilesetNum];
 }
 
 function getSpriteImage(spriteNum) {
