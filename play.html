@@ -79,6 +79,9 @@ function draw() {
 				// TODO: draw proper sprite depending on monster
 				ctx.drawImage(getSpriteImage(1), x*16, y*16);
 			}
+			else if(actionPair.actionClass === 9) { // draw radiation symbol
+				ctx.drawImage(getSpriteImage(8), x*16, y*16);
+			}
 		}
 	}
 	ctx.restore();
