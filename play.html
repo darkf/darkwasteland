@@ -82,7 +82,11 @@ function draw() {
 			}
 			else if(actionPair.actionClass === 4) { // masked tile (cover it with another)
 				const newTileId = game.map.actions[actionPair.actionClass][actionPair.action].tile;
-				ctx.drawImage(getTileImage(newTileId), x*16, y*16);
+				const newTileImage = getTileImage(newTileId);
+				if(newTileImage)
+					ctx.drawImage(getTileImage(newTileId), x*16, y*16);
+				else
+					console.log("no tile image for masked tile", newTileId, "@", x, ",", y);
 			}
 
 			// draw party (TODO: alternate groups)
