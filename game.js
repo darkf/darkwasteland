@@ -116,6 +116,9 @@ function gameApplyAction(game, action) {
 			if(action.message !== undefined)
 				gamePrintMessage(game, action.message);
 
+			if(Config.party.noclip)
+				return true;
+
 			return false; // impassable
 		}
 
