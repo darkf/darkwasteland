@@ -7,21 +7,21 @@
 <body>
 <!-- Game UI -->
 <div id="game-ui">
-	<div id="game-box" class="box">
-		<canvas id="canvas" width="800" height="480"></canvas>
-	</div>
-	<div id="game-text" class="box">Welcome to DarkWasteland!</div>
+    <div id="game-box" class="box">
+        <canvas id="canvas" width="800" height="480"></canvas>
+    </div>
+    <div id="game-text" class="box">Welcome to DarkWasteland!</div>
 </div>
 
 <!-- Modal UI for encounters / shops / doctors -->
 <div id="modal-ui">
-	<div id="top">
-		<div id="portrait" class="box">
-			<img id="portrait-image" width="96" height="84" alt="Portrait" title="Portrait">
-		</div>
-		<div id="enctext" class="box"></div>
-	</div>
-	<div id="party" class="box"></div>
+    <div id="top">
+        <div id="portrait" class="box">
+            <img id="portrait-image" width="96" height="84" alt="Portrait" title="Portrait">
+        </div>
+        <div id="enctext" class="box"></div>
+    </div>
+    <div id="party" class="box"></div>
 </div>
 
 
@@ -48,133 +48,133 @@ let dirty = true;
 ctx.imageSmoothingEnabled = false; // disable image filtering/AA
 
 function centerCamera(tilePos) {
-	camera.x = tilePos.x*16*MAP_SCALE - SCREEN_WIDTH/2|0;
-	camera.y = tilePos.y*16*MAP_SCALE - SCREEN_HEIGHT/2|0;
-	dirty = true;
+    camera.x = tilePos.x*16*MAP_SCALE - SCREEN_WIDTH/2|0;
+    camera.y = tilePos.y*16*MAP_SCALE - SCREEN_HEIGHT/2|0;
+    dirty = true;
 }
 
 function draw() {
-	const map = game.map;
-	ctx.fillStyle = "black";
-	ctx.fillRect(0, 0, 800, 640);
+    const map = game.map;
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, 800, 640);
 
-	ctx.save();
-	ctx.translate(-camera.x, -camera.y);
-	ctx.scale(MAP_SCALE, MAP_SCALE);
-	for(let y = 0; y < map.size; y++) {
-		for(let x = 0; x < map.size; x++) {
-			const offset = getTilesetOffsetOf(game, map.tilemap[y][x]);
-			if(!offset) {
-				console.log("no tile image for tile", map.tilemap[y][x], "@", x, ",", y);
-				continue;
-			}
-			ctx.drawImage(tilesetImage, offset.x, offset.y, 16, 16, x*16, y*16, 16, 16);
+    ctx.save();
+    ctx.translate(-camera.x, -camera.y);
+    ctx.scale(MAP_SCALE, MAP_SCALE);
+    for(let y = 0; y < map.size; y++) {
+        for(let x = 0; x < map.size; x++) {
+            const offset = getTilesetOffsetOf(game, map.tilemap[y][x]);
+            if(!offset) {
+                console.log("no tile image for tile", map.tilemap[y][x], "@", x, ",", y);
+                continue;
+            }
+            ctx.drawImage(tilesetImage, offset.x, offset.y, 16, 16, x*16, y*16, 16, 16);
 
-			// maybe draw sprites depending on the tile action
-			const actionPair = mapGetActionPair(map, {x, y});
-			if(actionPair.actionClass === 3) { // draw a sprite for an encounter
-				// TODO: visibility
-				// TODO: draw proper sprite depending on monster
-				ctx.drawImage(getSpriteImage(1), x*16, y*16);
-			}
-			else if(actionPair.actionClass === 9) { // draw radiation symbol
-				ctx.drawImage(getSpriteImage(8), x*16, y*16);
-			}
-			else if(actionPair.actionClass === 4) { // masked tile (cover it with another)
-				const newTileId = game.map.actions[actionPair.actionClass][actionPair.action].tile;
-				const offset = getTilesetOffsetOf(game, newTileId);
-				if(offset)
-					ctx.drawImage(tilesetImage, offset.x, offset.y, 16, 16, x*16, y*16, 16, 16);
-				else
-					console.log("no tile image for masked tile", newTileId, "@", x, ",", y);
-			}
+            // maybe draw sprites depending on the tile action
+            const actionPair = mapGetActionPair(map, {x, y});
+            if(actionPair.actionClass === 3) { // draw a sprite for an encounter
+                // TODO: visibility
+                // TODO: draw proper sprite depending on monster
+                ctx.drawImage(getSpriteImage(1), x*16, y*16);
+            }
+            else if(actionPair.actionClass === 9) { // draw radiation symbol
+                ctx.drawImage(getSpriteImage(8), x*16, y*16);
+            }
+            else if(actionPair.actionClass === 4) { // masked tile (cover it with another)
+                const newTileId = game.map.actions[actionPair.actionClass][actionPair.action].tile;
+                const offset = getTilesetOffsetOf(game, newTileId);
+                if(offset)
+                    ctx.drawImage(tilesetImage, offset.x, offset.y, 16, 16, x*16, y*16, 16, 16);
+                else
+                    console.log("no tile image for masked tile", newTileId, "@", x, ",", y);
+            }
 
-			// draw party (TODO: alternate groups)
-			if(x === game.partyPos.x && y === game.partyPos.y) {
-				ctx.drawImage(getSpriteImage(7), x*16, y*16);
-			}
+            // draw party (TODO: alternate groups)
+            if(x === game.partyPos.x && y === game.partyPos.y) {
+                ctx.drawImage(getSpriteImage(7), x*16, y*16);
+            }
 
-		}
-	}
-	ctx.restore();
+        }
+    }
+    ctx.restore();
 }
 
 function tick() {
-	if(dirty || velocity.x !== 0 || velocity.y !== 0) {
-		camera.x += velocity.x * 5;
-		camera.y += velocity.y * 5;
+    if(dirty || velocity.x !== 0 || velocity.y !== 0) {
+        camera.x += velocity.x * 5;
+        camera.y += velocity.y * 5;
 
-		draw();
-		dirty = false;
-	}
+        draw();
+        dirty = false;
+    }
 
-	window.requestAnimationFrame(tick);
+    window.requestAnimationFrame(tick);
 }
 
 function dirToVec(dir) {
-	switch(dir) {
-		case DIR_LEFT: return {x: -1, y: 0};
-		case DIR_RIGHT: return {x: 1, y: 0};
-		case DIR_UP: return {x: 0, y: -1};
-		case DIR_DOWN: return {x: 0, y: 1};
-		default: throw new Error("");
-	}
+    switch(dir) {
+        case DIR_LEFT: return {x: -1, y: 0};
+        case DIR_RIGHT: return {x: 1, y: 0};
+        case DIR_UP: return {x: 0, y: -1};
+        case DIR_DOWN: return {x: 0, y: 1};
+        default: throw new Error("");
+    }
 }
 
 function moveParty(dir) {
-	gameMovePartyInDir(game, dir);
-	dirty = true;
+    gameMovePartyInDir(game, dir);
+    dirty = true;
 }
 
 document.onkeydown = function(e) {
-	switch(e.keyCode) {
-		// camera controls
-		case 39: velocity.x = 1; break; // right
-		case 37: velocity.x = -1; break; // left
-		case 38: velocity.y = -1; break; // up
-		case 40: velocity.y = 1; break; // down
+    switch(e.keyCode) {
+        // camera controls
+        case 39: velocity.x = 1; break; // right
+        case 37: velocity.x = -1; break; // left
+        case 38: velocity.y = -1; break; // up
+        case 40: velocity.y = 1; break; // down
 
-		// movement controls
-		case 87: moveParty(DIR_UP); break; // W
-		case 65: moveParty(DIR_LEFT); break; // A
-		case 83: moveParty(DIR_DOWN); break; // S
-		case 68: moveParty(DIR_RIGHT); break; // D
+        // movement controls
+        case 87: moveParty(DIR_UP); break; // W
+        case 65: moveParty(DIR_LEFT); break; // A
+        case 83: moveParty(DIR_DOWN); break; // S
+        case 68: moveParty(DIR_RIGHT); break; // D
 
-		case 27: uiExit(); break; // Esc
+        case 27: uiExit(); break; // Esc
 
-		default: console.log(e.keyCode);
-	}
+        default: console.log(e.keyCode);
+    }
 }
 
 document.onkeyup = function(e) {
-	switch(e.keyCode) {
-		case 39: case 37: velocity.x = 0; break; // right/left
-		case 38: case 40: velocity.y = 0; break; // up/down
-	}
+    switch(e.keyCode) {
+        case 39: case 37: velocity.x = 0; break; // right/left
+        case 38: case 40: velocity.y = 0; break; // up/down
+    }
 }
 
 function load() {
-	requestJSON("data/locationMap.json", function(_locationMap) {
-		locationMap = _locationMap;
+    requestJSON("data/locationMap.json", function(_locationMap) {
+        locationMap = _locationMap;
 
-		preloadSprites(function() {
-			requestXML("data/gamedata1/savegame.xml", function(xml) {
-				gameFromXML(xml, function(_game) {
-					game = _game;
-					map = game.map;
+        preloadSprites(function() {
+            requestXML("data/gamedata1/savegame.xml", function(xml) {
+                gameFromXML(xml, function(_game) {
+                    game = _game;
+                    map = game.map;
 
-					console.log("map: %o", map);
-					loadMapData(map, function() {
-						// game.partyPos = {x: 26, y: 9}; // DEBUG
-						game.partyPos = {x: 26, y: 5}; // DEBUG
-						centerCamera(game.partyPos);
-						draw();
-						tick();
-					})
-				})
-			});
-		});
-	});
+                    console.log("map: %o", map);
+                    loadMapData(map, function() {
+                        // game.partyPos = {x: 26, y: 9}; // DEBUG
+                        game.partyPos = {x: 26, y: 5}; // DEBUG
+                        centerCamera(game.partyPos);
+                        draw();
+                        tick();
+                    })
+                })
+            });
+        });
+    });
 }
 
 load();
