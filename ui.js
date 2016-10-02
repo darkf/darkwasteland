@@ -45,17 +45,21 @@ function uiBuy(game, char) {
     uiEncounterLog("You have $" + char.money + "\n\n");
     
     let id = 0;
-    for(const item of _shopItems) {
-        if(item.stock === 0) continue;
+    uiBeginOptions();
+    for(const shopItem of _shopItems) {
+        if(shopItem.stock === 0) continue;
         id++;
 
-        const $el = document.createElement("DIV");
-        $el.innerText = id + ") " + item.id + " (type " + item.type + ")";
-        $el.onclick = function() {
+        // actual item, from the item table
+        // TODO/XXX: do the stats in the shop tables differ from the originals?
+        const item = _itemTable[shopItem.id];
+        const name = item ? item.name : shopItem.id;
+
+        uiOption(id + ") " + name + " (id " + shopItem.id + ", type " + shopItem.type + ")", () => {
             // buy item
-        }
-        $enctext.appendChild($el);
+        });
     }
+    uiEndOptions();
 }
 
 function uiSell(game, char) {
