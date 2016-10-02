@@ -105,7 +105,7 @@ function uiEndOptions() { }
 function uiOption(optionTitle, callback) {
 	// TODO: also set up numbers for using the keyboard
 	const $el = document.createElement("DIV");
-	$el.innerText = optionTitle;
+	$el.innerText = optionTitle.replace("\\r", "");
 	$el.onclick = function() { callback(); }
 	$enctext.appendChild($el);
 }
@@ -164,28 +164,70 @@ function uiEncounterMainMenu(game, char, optionChosenCallback) {
 
 function uiDialogue(game, action) {
 	$enctext.innerHTML = "";
-	uiEncounterLog(gameGetMessage(game, action.message));
+	const message = gameGetMessage(game, action.message);
 
-	for(const answer of action.children) {
-		assert(answer.tag === "answer");
-		const message = gameGetMessage(game, answer.message);
-		console.log("-", message);
+	function answerWith(answerStr) {
+		// try to find the answer
+		let answer = null;
+		for(const child of action.children) {
+			assert(child.tag === "answer");
+			if(gameGetMessage(game, child.message).toLowerCase() === answerStr.toLowerCase()) {
+				answer = child;
+				break;
+			}
+		}
 
-		const $el = document.createElement("DIV");
-		$el.innerText = message;
-		$el.onclick = function() {
-			// close UI
-			// TODO: Don't do this on non-menu dialogue when we implement that
+		if(!answer)
+			return null;
+
+		// possibly update to the new action class
+		if(mapSetActionPair(game.map, game.partyPos, answer.newActionClass, answer.newAction)) {
+			console.log("set action pair")
+			// walk in-place to trigger the new action
+			gameMoveParty(game, game.partyPos);
+		}
+
+		return answer;
+	}
+
+	if(action.menu) {
+		// For menu-based dialogue, the question is delimited by \x11, and
+		// the options following begin with \x10, followed by a character
+		// representing the answer (a letter or digit).
+		const [question, all_options] = message.split("\\x11");
+		const options = all_options.split("\\x10").slice(1);
+		uiEncounterLog(question);
+
+		// display a menu of possible dialogue options
+		uiBeginOptions();
+		for(const answer of options) {
+			// answer with the first character
+			uiOption(answer, () => {
+				answerWith(answer[0]);
+
+				// close UI
+				uiHide();
+			});
+		}
+		uiEndOptions();
+	}
+	else { // free-form typing dialogue
+		uiEncounterLog(message);
+
+		const answerStr = prompt(message);
+		if(!answerStr) {
+			// TODO: apply cancel dialogue action pairs, if any
 			uiHide();
+			return;
+		}
 
-			// possibly update to the new action class
-			if(mapSetActionPair(game.map, game.partyPos, answer.newActionClass, answer.newAction)) {
+		if(!answerWith(answerStr)) {
+			// unknown answer
+			if(mapSetActionPair(game.map, game.partyPos, action.otherNewActionClass, action.otherNewAction)) {
 				// walk in-place to trigger the new action
 				gameMoveParty(game, game.partyPos);
 			}
 		}
-
-		$enctext.appendChild($el);
 	}
 
 	uiShow();
