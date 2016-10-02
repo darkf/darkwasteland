@@ -31,9 +31,10 @@ function uiClearEncounterLog() { $enctext.innerHTML = ""; }
 function uiUpdateParty(game, callback) {
     $party.innerHTML = "";
 
+    $party.innerHTML = "Name AC CON<br>";
     for(const char of game.party) {
         const $el = document.createElement("DIV");
-        $el.innerText = char.id + ") " + char.name;
+        $el.innerText = char.id + ") " + char.name + " " + char.stats.ac + " " + char.stats.con;
         $el.onclick = function() { if(callback) callback(char); }
         $party.appendChild($el);
     }
@@ -128,7 +129,7 @@ function uiEncounter(game, action, encounterFinishedCallback) {
     function next(cur) {
         if(cur === numChars) {
             uiEncounterLog("Use these options?");
-            uiOptions([ ["Y", () => { combatExecuteTurn(game); }]
+            uiOptions([ ["Y", () => { combatExecuteTurn(game); uiUpdateParty(game, null); }]
                       , ["N", () => { next(0); }]
                       ]);
         }

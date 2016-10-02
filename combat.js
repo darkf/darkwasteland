@@ -57,6 +57,9 @@ function combatExecuteTurn(game) {
 	assert(game.encounter);
 	console.log("TODO: execute combat turn");
 
+	uiClearEncounterLog();
+	uiEncounterLog("Encounter begins...\\r");
+
 	// TODO: combat intiative/speed, for turn order
 	// for now we just assume the party goes first, in order, and then the monster gets a turn
 
@@ -65,6 +68,7 @@ function combatExecuteTurn(game) {
 	// TODO: Support multiple encounter groups
 	// TODO: Support multiple parties
 	// TODO: Support more than just the 'Attack' command for PCs
+	// TODO: Ranged attacks are performed first, then melee, then other actions (i.e. evade, run)
 
 	// Party attacks monster
 	for(const char of game.party) {
