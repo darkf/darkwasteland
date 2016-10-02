@@ -88,11 +88,17 @@ function gameApplyAction(game, action) {
 				// TODO: Does the case when x/y are not specified refer to
 				// the *current* (before stepping) tile, or the tile after stepping?
 
-				let pos;
-				if(child.x !== undefined && child.y !== undefined)
-					pos = {x: child.x, y: child.y};
-				else
-					pos = vecCopy(game.partyPos);
+				const pos = vecCopy(game.partyPos);
+				if(child.relative) {
+					pos.x += child.x || 0;
+					pos.y += child.y || 0;
+				}
+				else {
+					if(child.x !== undefined)
+						pos.x = child.x;
+					if(child.y !== undefined)
+						pos.y = child.y;
+				}
 
 				mapSetActionPair(game.map, pos, child.newActionClass, child.newAction);
 
